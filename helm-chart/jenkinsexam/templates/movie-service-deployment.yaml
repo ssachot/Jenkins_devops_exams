@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movie-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: movie-service
+  template:
+    metadata:
+      labels:
+        app: movie-service
+    spec:
+      containers:
+      - name: movie-service
+        image: {{ .Values.movie_service.image }}
+        ports:
+        - containerPort: {{ .Values.movie_service.port }}
+        env:
+        - name: DATABASE_URI
+          value: {{ .Values.movie_service.database_uri }}
+        command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "{{ .Values.movie_service.port }}"]
