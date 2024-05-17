@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG = credentials('KUBECONFIG') 
-        GIT_REPO = 'https://github.com/ssachot/Jenkins_devops_exams.git' // dépôt Git
+        KUBECONFIG = credentials('kubeconfig-credentials-id') // kubeconfig-credentials-id à Remplacer par l'ID de vos credentials Kubeconfig dans Jenkins
+        GIT_REPO = 'https://github.com/ssachot/Jenkins_devops_exams.git' // Remplacez par l'URL du dépôt Git
         CHART_PATH = 'helm-chart/jenkinsexam'
     }
 
