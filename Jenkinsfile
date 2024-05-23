@@ -1,9 +1,10 @@
+
 pipeline {
     agent any
 
     environment {
-        KUBECONFIG = credentials('kubeconfig-credentials-id') // Remplacer par l'ID des credentials dans Jenkins
-        GIT_REPO = 'https://github.com/ssachot/Jenkins_devops_exams.git' // Remplacer par l'URL du dépôt Git
+        KUBECONFIG = credentials('kubeconfig-credentials-id') // kubeconfig-credentials-id à Remplacer par l'ID du credential dans Jenkins
+        GIT_REPO = 'https://github.com/ssachot/Jenkins_devops_exams.git' // Remplacez par l'URL du dépôt Git
         CHART_PATH = 'helm-chart/jenkinsexam'
     }
 
@@ -15,7 +16,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Dev') {
+        stage('Dev') {
             steps {
                 script {
                     deployToKubernetes('dev')
@@ -28,7 +29,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to QA') {
+        stage('QA') {
             steps {
                 script {
                     deployToKubernetes('qa')
@@ -41,7 +42,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Staging') {
+        stage('Staging') {
             steps {
                 script {
                     deployToKubernetes('staging')
@@ -54,13 +55,16 @@ pipeline {
             }
         }
 
-        stage('Deploy to Prod') {
+        stage('Prod') {
             when {
                 branch 'master'
             }
-            steps {
+            input{
+				message "Press Ok to deploy in prod"
+				}
+			
+			steps {
                 script {
-                    // Demande de confirmation pour déployer en production
                     input message: 'Deploy to Production?', ok: 'Deploy'
                     deployToKubernetes('prod')
                 }
@@ -68,7 +72,6 @@ pipeline {
             post {
                 always {
                     script {
-                        // Demande de confirmation pour désinstaller de la production
                         input message: 'Uninstall from Production?', ok: 'Uninstall'
                         uninstallFromKubernetes('prod')
                     }
