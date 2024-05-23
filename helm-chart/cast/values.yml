@@ -1,0 +1,11 @@
+cast_db:
+  image: postgres:12.1-alpine
+  username: cast_db_username
+  password: cast_db_password
+  dbname: cast_db_dev
+  port: 5432
+
+cast_service:
+  image: sevsachot/jenkinsexam-cast-service:latest
+  port: 8000
+  database_uri: "postgresql://{{ .Values.cast_db.username }}:{{ .Values.cast_db.password }}@cast-db/{{ .Values.cast_db.dbname }}"

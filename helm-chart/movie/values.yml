@@ -1,0 +1,11 @@
+movie_db:
+  image: postgres:12.1-alpine
+  username: movie_db_username
+  password: movie_db_password
+  dbname: movie_db_dev
+  port: 5432
+
+movie_service:
+  image: sevsachot/jenkinsexam-movie-service:v1
+  port: 8000
+  database_uri: "postgresql://{{ .Values.movie_db.username }}:{{ .Values.movie_db.password }}@movie-db/{{ .Values.movie_db.dbname }}"

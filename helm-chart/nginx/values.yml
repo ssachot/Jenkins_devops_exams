@@ -1,0 +1,13 @@
+nginx:
+  image: nginx:latest
+  port: 8080
+  nodePort: 30300
+  proxyConfig:
+    movies:
+      path: /api/v1/movies
+      service: movie-service
+      port: 8000
+    casts:
+      path: /api/v1/casts
+      service: cast-service
+      port: 8000

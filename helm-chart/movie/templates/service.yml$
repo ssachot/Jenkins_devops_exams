@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: movie-db
+spec:
+  selector:
+    app: movie-db
+  ports:
+  - protocol: TCP
+    port: {{ .Values.movie_db.port }}
+    targetPort: {{ .Values.movie_db.port }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: movie-service
+spec:
+  selector:
+    app: movie-service
+  ports:
+  - protocol: TCP
+    port: {{ .Values.movie_service.port }}
+    targetPort: {{ .Values.movie_service.port }}
