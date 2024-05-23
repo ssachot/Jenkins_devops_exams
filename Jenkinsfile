@@ -71,21 +71,6 @@ pipeline {
             }
         }
 		
-		stage('Undeployed') {
-            input {
-                message "Press Ok to undeploy"
-            }
-            steps {
-                script {
-                    uninstallFromKubernetes('staging')
-                }
-            }
-            post {
-                always {
-                    echo "Undeployment successful!"
-                }
-            }
-        }
     }
 
     post {
