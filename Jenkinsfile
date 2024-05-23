@@ -1,9 +1,8 @@
-
 pipeline {
     agent any
 
     environment {
-        KUBECONFIG = credentials('kubeconfig-credentials-id') // kubeconfig-credentials-id à Remplacer par l'ID du credential dans Jenkins
+        KUBECONFIG = credentials('kubeconfig-credentials-id') // kubeconfig-credentials-id à remplacer par l'ID du credential dans Jenkins
         GIT_REPO = 'https://github.com/ssachot/Jenkins_devops_exams.git' // Remplacez par l'URL du dépôt Git
         CHART_PATH = 'helm-chart/jenkinsexam'
     }
@@ -20,6 +19,7 @@ pipeline {
             steps {
                 script {
                     deployToKubernetes('dev')
+                    runTests('dev')
                 }
             }
             post {
@@ -33,6 +33,7 @@ pipeline {
             steps {
                 script {
                     deployToKubernetes('qa')
+                    runTests('qa')
                 }
             }
             post {
@@ -46,6 +47,7 @@ pipeline {
             steps {
                 script {
                     deployToKubernetes('staging')
+                    runTests('staging')
                 }
             }
             post {
@@ -59,22 +61,28 @@ pipeline {
             when {
                 branch 'master'
             }
-            input{
-				message "Press Ok to deploy in prod"
-				}
-			
-			steps {
+            input {
+                message "Press Ok to deploy in prod"
+            }
+            steps {
                 script {
-                    input message: 'Deploy to Production?', ok: 'Deploy'
                     deployToKubernetes('prod')
+                }
+            }
+        }
+		
+		stage('Undeployed') {
+            input {
+                message "Press Ok to undeploy"
+            }
+            steps {
+                script {
+                    uninstallFromKubernetes('staging')
                 }
             }
             post {
                 always {
-                    script {
-                        input message: 'Uninstall from Production?', ok: 'Uninstall'
-                        uninstallFromKubernetes('prod')
-                    }
+                    echo "Undeployment successful!"
                 }
             }
         }
@@ -103,5 +111,13 @@ def uninstallFromKubernetes(env) {
     sh """
         export KUBECONFIG=\$KUBECONFIG
         helm uninstall ${env}-deployment --namespace ${env}
+    """
+}
+
+def runTests(env) {
+    // Script pour exécuter les tests dans l'environnement spécifié
+    sh """
+        echo "Running tests in the ${env} environment"
+
     """
 }
